@@ -6,7 +6,6 @@
 package com.example.sherdpref;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,25 +17,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-int count=0;
+Integer count=0;
 TextView counter;
 EditText Name;
-String name;
-SharedPreferences settings=getSharedPreferences("MY_PREF",MODE_PRIVATE);
-SharedPreferences.Editor editor=settings.edit();
+String name="name";
+SharedPreferences settings;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        settings= getSharedPreferences("PREFS_INFO",MODE_PRIVATE);
         counter=(TextView)findViewById(R.id.counter);
         Name=(EditText)findViewById(R.id.Name);
-        count=settings.getInt("count",999999);
-        name=settings.getString("name","a");
-        if(name.equals("a")){
-            count=0;
-            name="";
+        try {
+            count = settings.getInt("count", 0);
+            name = settings.getString("name", "name");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        counter.setText(count);
+        counter.setText(count.toString());
         Name.setText(name);
     }
     /**
@@ -45,12 +44,13 @@ SharedPreferences.Editor editor=settings.edit();
      * @param view the button that got clicked.
      */
     public void exit(View view) {
+        SharedPreferences.Editor editor=settings.edit();
         name=Name.getText().toString();
-        if(name.equals(null))
-            Toast.makeText(MainActivity.this,"enter a name",Toast.LENGTH_SHORT).show();
-        editor.putString("name",name);
-        editor.putInt("count",count);
-        editor.commit();
+            editor.putString("name",name);
+            editor.putInt("count",count);
+            editor.commit();
+            finish();
+
     }
 
     /**
@@ -60,6 +60,7 @@ SharedPreferences.Editor editor=settings.edit();
      */
     public void reset(View view) {
         count=0;
+        counter.setText("0");
     }
 
     /**
@@ -69,6 +70,7 @@ SharedPreferences.Editor editor=settings.edit();
      */
     public void count(View view) {
         count++;
+        counter.setText(count.toString());
 
     }
     /**
